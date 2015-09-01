@@ -1,0 +1,19 @@
+---
+- name: install  hue 
+  yum: name={{ item }} state=present
+  with_items:
+  - hue
+  tags:
+  - cdh5-hue
+
+- name: copy hue config 
+  template: src={{ item }}.j2 dest=/etc/hue/conf/{{ item }} owner=root group=root mode=0664
+  with_items:
+  - hue.ini
+  tags:
+  - cdh5-hue
+
+- name: start hue
+  service: name=hue state=started
+  tags:
+  - cdh5-hue

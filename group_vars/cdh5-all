@@ -1,0 +1,90 @@
+---
+version:
+  hadoop: 2.6.0+cdh5.4.4+597-1.cdh5.4.4.p0.6.el6
+  lzo: 0.4.15+cdh5.4.4+0-1.cdh5.4.4.p0.6.el6
+  hbase: 1.0.0+cdh5.4.4+160-1.cdh5.4.4.p0.6.el6
+  hive: 1.1.0+cdh5.4.4+157-1.cdh5.4.4.p0.6.el6
+  oozie: 4.1.0+cdh5.4.4+145-1.cdh5.4.4.p0.6.el6
+  pig: 0.12.0+cdh5.4.4+59-1.cdh5.4.4.p0.6.el6
+  zookeeper: 3.4.5+cdh5.4.4+91-1.cdh5.4.4.p0.6.el6
+
+spark_version: spark-1.4.1-bin-hadoop2.6
+spark_url: http://d3kbcqa49mib13.cloudfront.net/spark-1.4.1-bin-hadoop2.6.tgz
+
+
+ansible_path: "{{ lookup('env','ANSIBLE_WORK_DIR') }}"
+repo_server: 10.100.1.10
+
+tl_domain: cmcm.com
+
+# core-site_xml
+nameservice_id: mycluster
+fs_trash_interval: 1440
+
+# zoo_cfg
+zookeeper_datadir: /data/lib/zookeeper
+
+# hdfs-site_xml
+dfs_permissions_superusergroup: hdfs
+dfs_permissions_enabled: 'false'
+dfs_replication: 3
+dfs_journalnode_edits_dir: /data/hadoop/dfs/jn
+dfs_blocksize: 134217728
+dfs_namenode_handler_count: 256
+dfs_datanode_handler_count: 32
+dfs_datanode_du_reserved: 107374182400
+dfs_balance_bandwidthPerSec: 1048576
+dfs_hosts_exclude: /etc/hadoop/conf.{{ nameservice_id }}/datanodes.exclude
+dfs_datanode_max_transfer_threads: 4096
+dfs_datanode_balanced_space_threshold: 10737418240
+dfs_datanode_balanced_space_preference_fraction: 0.75
+dfs_datanode_max_xcievers: 4096
+dfs_checksum_type: CRC32
+dfs_namenode_name_dir:
+  - /data/hadoop/dfs/nn
+  - /data1/hadoop/dfs/nn
+dfs_datanode_data_dir:
+  - /data/hadoop/dfs/dn
+  - /data1/hadoop/dfs/dn
+
+# yarn-site_xml
+yarn_nodemanager_local_dirs:
+  - /data/hadoop/yarn/local
+  - /data1/hadoop/yarn/local
+yarn_nodemanager_log_dirs:
+  - /data/hadoop/yarn/logs
+  - /data1/hadoop/yarn/logs
+yarn_nodemanager_remote_app_log_dir: 'hdfs://{{ nameservice_id }}/var/log/hadoop-yarn/apps'
+yarn_nodemanager_vmem_pmem_ratio: 10
+yarn_nodemanager_resource_memory_mb: 24576
+yarn_nodemanager_pmem_check_enabled: 'true'
+yarn_nodemanager_vmem_check_enabled: 'true'
+
+# mapred-site_xml
+mapreduce_map_memory_mb: 1536
+mapreduce_reduce_memory_mb: 2880
+mapreduce_map_java_opts: '-Xmx1228m'
+mapreduce_reduce_java_opts: '-Xmx2456m'
+mapreduce_jobtracker_handler_count: 128
+dfs_namenode_handler_count: 128
+
+# hive-site_xml  mysql or RDS url
+mysql_hosts: xxx.com
+sup_user: admin
+sup_passwd: xxx
+
+hive_mysql_hosts: 
+  - "%"
+  - "127.0.0.1"
+  - "localhost"
+hive_mysql_passwd: hive
+
+# oozie-site_xml
+oozie_db_passwd: oozie
+
+#aws roles
+role_name: xxx-xxx-xxx
+awsAccessKeyId: xxx
+awsSecretAccessKey: xxx
+
+

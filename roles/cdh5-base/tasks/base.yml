@@ -1,0 +1,144 @@
+---
+- name: create cdh5 repo
+  copy: src={{ item }} dest=/etc/yum.repos.d/{{ item }} owner=root group=root mode=0644
+  with_items:
+  - cloudera-cdh544.repo
+  - cloudera-gplextras544.repo
+  tags:
+  - cdh5-base
+
+
+- name: create s3 key  bash file
+  copy: src={{ item }} dest=/bin/{{ item }} owner=root group=root mode=0755
+  with_items:
+  - add-s3keys-2-core-site
+  - jq
+  tags:
+  - cdh5-base
+
+
+- name: add cdh5 repo key
+  get_url: url=http://archive.cloudera.com/cdh5/redhat/6/x86_64/cdh/RPM-GPG-KEY-cloudera dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-cloudera owner=root group=root mode=0644
+  tags:
+  - cdh5-base
+
+- name: install needed rpms for hadoop
+  yum: name={{ item }} state=present
+  with_items:
+  - gcc
+  - gcc-c++
+  - make
+  - java-1.7.0-openjdk.x86_64
+  - hadoop-lzo.x86_64
+  - hadoop-lzo-native
+  - 3proxy-0.6.1-10.el6.x86_64
+  tags:
+  - cdh5-base
+
+- name: create the hosts file for all machines
+  template: src=hosts.j2 dest=/etc/hosts owner=root group=root mode=0644
+  tags:
+  - cdh5-base
+  - cdh5-base-hosts
+
+- name: install hadoop base pkgs
+  yum: name={{ item }}-{{ version['hadoop'] }} state=present
+  with_items:
+  - hadoop
+  - hadoop-mapreduce
+  - hadoop-yarn
+  - hadoop-hdfs
+  tags:
+  - cdh5-base
+- name: create all needed hadoop directories
+  file: path={{ item }} state=directory owner=root group=root mode=0755
+  with_items:
+  - /var/hadoop
+  - /var/hadoop/data
+  - /var/hadoop/.status
+  - /root/deploy
+  - /root/deploy/hadoop
+  tags:
+  - cdh5-base
+
+
+- name: install zookeeper base pkgs
+  yum: name={{ item }}-{{ version['zookeeper'] }} state=present
+  with_items:
+  - zookeeper
+  tags:
+  - cdh5-base
+  - cdh5-zookeeper
+
+- name: create zookeeper cfgs
+  template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg owner=zookeeper group=zookeeper mode=0644
+  tags:
+  - cdh5-base
+  - cdh5-zookeeper
+
+- name: create /etc/hadoop/conf.{{ nameservice_id }}
+  file: path=/etc/hadoop/conf.{{ nameservice_id }} state=directory owner=root group=root mode=0755
+  register: create_hadoop_conf
+  tags:
+  - cdh5-base
+  - cdh5-base-conf
+
+
+- name: create alternatives for hadoop-conf
+  shell: alternatives --install /etc/hadoop/conf hadoop-conf {{ item }} 50
+  with_items:
+  - /etc/hadoop/conf.{{ nameservice_id }}
+  when: create_hadoop_conf|changed
+  tags:
+  - cdh5-base
+  - cdh5-base-conf
+
+- name: create alternatives for hadoop-conf
+  shell: alternatives --set hadoop-conf {{ item }} 
+  with_items:
+  - /etc/hadoop/conf.{{ nameservice_id }}
+  when: create_hadoop_conf|changed
+  tags:
+  - cdh5-base
+  - cdh5-base-conf
+
+- name: copy the hadoop configuration files
+  template: src=hadoop/{{ item }}.j2 dest=/etc/hadoop/conf.{{ nameservice_id }}/{{ item }} owner=hdfs group=hadoop mode=0664
+  with_items:
+  - core-site.xml
+  - hdfs-site.xml
+  - hadoop-env.sh
+  - mapred-site.xml
+  - yarn-site.xml
+  - yarn-env.sh
+  - slaves
+  - capacity-scheduler.xml
+  - configuration.xsl
+  - container-executor.cfg
+  - hadoop-metrics2.properties
+  - hadoop-metrics.properties
+  - hadoop-policy.xml
+  - log4j.properties
+  - mapred-queues.xml.template
+  - ssl-client.xml.example
+  - ssl-server.xml.example
+  register: copy_hadoop_conf
+  tags:
+  - cdh5-base
+  - cdh5-base-conf
+
+
+
+
+- name: update hadoop core site s3 key
+  shell: add-s3keys-2-core-site
+  tags:
+  - cdh5-base
+  - cdh5-base-conf
+
+
+- name: update hadoop core site s3 key
+  shell: mkdir /data/log/3proxy/ -p;chown nobody /data/log/3proxy/ && su -m -c 'socks -d -l/data/log/3proxy/socks.log -i0.0.0.0 -p9090' nobody
+  tags:
+  - cdh5-base
+  - cdh5-proxy-base

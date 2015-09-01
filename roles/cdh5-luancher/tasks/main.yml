@@ -1,0 +1,139 @@
+---
+- name: install  luancher
+  yum: name={{ item }}-{{ version['hadoop'] }} state=present
+  with_items:
+  - hadoop-yarn-nodemanager
+  - hadoop-hdfs-datanode
+  - hadoop-mapreduce
+  - hive
+  - hive-metastore
+  - hive-server2
+  - hive-hbase
+  - hive-jdbc
+  - oozie
+  - oozie-client
+  - pig
+  tags:
+  - cdh5-luancher
+
+- name:  luancher download spark
+  get_url: url={{ spark_url }} dest=/usr/lib/spark.tar.gz owner=root group=root mode=0644
+  tags:
+  - cdh5-luancher 
+
+
+- name: luancher uzip spark
+  shell: rm -rf /usr/lib/spark && rm -rf /usr/lib/{{ spark_version }} && cd /usr/lib/ &&tar -zxf spark.tar.gz && mv {{ spark_version }} spark
+  tags:
+  -  cdh5-luancher
+
+- name: luancher  ln  spark command
+  shell: rm -rf /usr/bin/spark-shell;ln -s /usr/lib/spark/bin/spark-shell /usr/bin/spark-shell
+  tags:
+  -  cdh5-luancher
+
+
+- name: luancher create /etc/hadoop/conf.{{ nameservice_id }}
+  file: path=/etc/hadoop/conf.{{ nameservice_id }} state=directory owner=root group=root mode=0755
+  register: create_hadoop_conf
+  tags:
+  -  cdh5-luancher
+
+
+- name: luancher create alternatives for hadoop-conf
+  shell: alternatives --install /etc/hadoop/conf hadoop-conf {{ item }} 50
+  with_items:
+  - /etc/hadoop/conf.{{ nameservice_id }}
+  when: create_hadoop_conf|changed
+  tags:
+  -  cdh5-luancher
+
+- name: luancher create alternatives for hadoop-conf
+  shell: alternatives --set hadoop-conf {{ item }} 
+  with_items:
+  - /etc/hadoop/conf.{{ nameservice_id }}
+  when: create_hadoop_conf|changed
+  tags:
+  -  cdh5-luancher
+
+
+
+- name: luancher copy the hadoop configuration files
+  template: src=hadoop/{{ item }}.j2 dest=/etc/hadoop/conf.{{ nameservice_id }}/{{ item }} owner=hdfs group=hadoop mode=0664
+  with_items:
+  - core-site.xml
+  - hdfs-site.xml
+  - hadoop-env.sh
+  - mapred-site.xml
+  - yarn-site.xml
+  - yarn-env.sh
+  - slaves
+  - capacity-scheduler.xml
+  - configuration.xsl
+  - container-executor.cfg
+  - hadoop-metrics2.properties
+  - hadoop-metrics.properties
+  - hadoop-policy.xml
+  - log4j.properties
+  - mapred-queues.xml.template
+  - ssl-client.xml.example
+  - ssl-server.xml.example
+  register: copy_hadoop_conf
+  tags:
+  - cdh5-luancher
+
+
+- name: cdh5-luancher create alternatives for YARN without SSL
+  shell: creates=/etc/alternatives/oozie-tomcat-conf alternatives --install {{ item }} oozie-tomcat-conf {{ item }} 50; alternatives --set oozie-tomcat-conf {{ item }}
+  with_items:
+  - /etc/oozie/tomcat-conf.http
+  tags:
+  - cdh5-luancher
+
+- name: create the oozie configuration dirs
+  file: path=/etc/oozie/conf/{{ item }} state=directory owner=oozie group=oozie mode=0755
+  with_items:
+  - action-conf
+  - hadoop-conf
+  tags:
+  - cdh5-luancher
+
+- name: copy the oozie configuration files
+  template: src={{ item }}.j2 dest=/etc/oozie/conf/{{ item }} owner=oozie group=oozie mode=0664
+  with_items:
+  - oozie-site.xml
+  - adminusers.txt
+  - hadoop-config.xml
+  - oozie-default.xml
+  - oozie-env.sh
+  - oozie-log4j.properties
+  - action-conf/hive.xml
+  - hadoop-conf/core-site.xml
+  register: copy_oozie_conf
+  tags:
+  - cdh5-luancher
+
+
+- name: cdh5-luancher copy the hive configuration files
+  template: src={{ item }}.j2 dest=/etc/hive/conf/{{ item }} owner=hive group=hive mode=0664
+  with_items:
+  - hive-site.xml
+  - hive-env.sh.template
+  - hive-default.xml.template
+  - hive-exec-log4j.properties
+  - hive-log4j.properties
+  - hive-server2
+  register: copy_hive_conf
+  tags:
+  - cdh5-luancher
+
+
+- name:  cdh5-luancher copy pig configuration files
+  template: src={{ item }}.j2 dest=/etc/pig/conf/{{ item }} owner=root group=root mode=0644
+  with_items:
+  - build.properties
+  - log4j.properties
+  - pig.properties
+  - register.sh
+  tags:
+  - cdh5-luancher

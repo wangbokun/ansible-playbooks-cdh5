@@ -1,0 +1,16 @@
+---
+- name: download spark
+  get_url: url={{ spark_url }} dest=/usr/lib/spark.tar.gz owner=root group=root mode=0644
+  tags:
+  -  cdh5-spark-base
+
+
+- name: uzip spark
+  shell: rm -rf /usr/lib/spark && rm -rf /usr/lib/{{ spark_version }} && cd /usr/lib/ &&tar -zxf spark.tar.gz && mv {{ spark_version }} spark
+  tags:
+  -  cdh5-spark-base
+
+- name: ln  spark command
+  shell: rm -rf /usr/bin/spark-shell;ln -s /usr/lib/spark/bin/spark-shell /usr/bin/spark-shell
+  tags:
+  -  cdh5-spark-base
