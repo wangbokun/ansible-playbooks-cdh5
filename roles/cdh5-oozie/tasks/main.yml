@@ -6,6 +6,7 @@
   - oozie-client
   tags:
   - cdh5-oozie
+  - cdh5-luancher
 
 - name: create alternatives for YARN without SSL
   shell: creates=/etc/alternatives/oozie-tomcat-conf alternatives --install {{ item }} oozie-tomcat-conf {{ item }} 50; alternatives --set oozie-tomcat-conf {{ item }}
@@ -14,6 +15,7 @@
   tags:
   - cdh5-oozie
   - cdh5-oozie-conf 
+  - cdh5-luancher
 
 - name: create the oozie configuration dirs
   file: path=/etc/oozie/conf/{{ item }} state=directory owner=oozie group=oozie mode=0755
@@ -23,6 +25,7 @@
   tags:
   - cdh5-oozie
   - cdh5-oozie-conf
+  - cdh5-luancher
 
 - name: copy the oozie configuration files
   template: src={{ item }}.j2 dest=/etc/oozie/conf/{{ item }} owner=oozie group=oozie mode=0664
@@ -39,6 +42,7 @@
   tags:
   - cdh5-oozie
   - cdh5-oozie-conf
+  - cdh5-luancher
 
 - name: create needed directories for oozie
   file: name={{ item }} state=directory owner=oozie group=oozie mode=0700
@@ -48,6 +52,7 @@
   - /var/oozie/.status
   tags:
   - cdh5-oozie
+  - cdh5-luancher
 
 - name: copy the oozie_db_init.sql to /var/oozie/deploy
   template: src={{ item }}.j2 dest=/var/oozie/deploy/{{ item }} owner=oozie group=oozie mode=0664
@@ -112,11 +117,11 @@
   - cdh5-oozie
   - cdh5-oozie-lib
  
-- name: create symbolically link for mysql connector
-  file: src=/usr/share/java/mysql-connector-java.jar dest=/var/lib/oozie/mysql-connector-java.jar owner=oozie group=oozie state=link
-  tags:
-  - cdh5-oozie
-  - cdh5-oozie-lib
+#- name: create symbolically link for mysql connector
+#  file: src=/usr/share/java/mysql-connector-java.jar dest=/var/lib/oozie/mysql-connector-java.jar owner=oozie group=oozie state=link
+#  tags:
+#  - cdh5-oozie
+#  - cdh5-oozie-lib
 
 #- name: create symbolically links for hadoop-lzo
 #  file: src=/usr/lib/hadoop/lib/{{ item }} dest=/var/lib/oozie/{{ item }} owner=oozie group=oozie state=link
@@ -139,6 +144,15 @@
 #  tags:
 #  - cdh5-oozie
 #  - cdh5-oozie-lib
+
+- name: create  oozie s3 jar files
+  copy: src={{ item }} dest=/usr/lib/oozie/libext/{{ item }} owner=oozie group=oozie mode=0644
+  with_items:
+  - emr-core-1.2.0.jar
+  - emrfs-1.7.0.jar
+  - jets3t-0.9.0.jar
+  tags:
+  - cdh5-oozie
 
 - name: start oozie
   service: name=oozie state=started

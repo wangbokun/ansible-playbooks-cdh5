@@ -2,15 +2,26 @@
 - name: download spark
   get_url: url={{ spark_url }} dest=/usr/lib/spark.tar.gz owner=root group=root mode=0644
   tags:
-  -  cdh5-spark-base
+  - cdh5-spark-base
+  - cdh5-luancher
 
 
 - name: uzip spark
   shell: rm -rf /usr/lib/spark && rm -rf /usr/lib/{{ spark_version }} && cd /usr/lib/ &&tar -zxf spark.tar.gz && mv {{ spark_version }} spark
   tags:
-  -  cdh5-spark-base
+  - cdh5-spark-base
+  - cdh5-luancher
 
-- name: ln  spark command
-  shell: rm -rf /usr/bin/spark-shell;ln -s /usr/lib/spark/bin/spark-shell /usr/bin/spark-shell
+- name: copy the hadoop configuration files
+  template: src={{ item }}.j2 dest=/usr/lib/spark/conf/{{ item }} owner=hdfs group=hdfs mode=0664
+  with_items:
+  - spark-defaults.conf
+  - fairscheduler.xml.template
+  - log4j.properties.template
+  - metrics.properties.template
+  - slaves
+  - spark-env.sh
+  - spark-env.sh.template
   tags:
-  -  cdh5-spark-base
+  - cdh5-spark-base
+  - cdh5-luancher

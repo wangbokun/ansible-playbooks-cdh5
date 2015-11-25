@@ -10,16 +10,19 @@
 
 - name: create the data directory for the slave nodes to store the data
   file: path={{ item }} state=directory owner=hdfs group=hdfs mode=0700
-  with_items: 
-  - "{{ dfs_datanode_data_dir }}"
+  with_items: "{{ dfs_datanode_data_dir }}"
   tags:
   - cdh5-slave
 
-- name: create the local storage directories for use by YARN
+- name: create the local storage directories for use by YARN local dir
   file: path={{ item }} state=directory owner=yarn group=yarn mode=0755
-  with_items:
-  - "{{ yarn_nodemanager_local_dirs }}"
-  - "{{ yarn_nodemanager_log_dirs }}"
+  with_items: "{{yarn_nodemanager_local_dirs}}"
+  tags:
+  - cdh5-slave
+
+- name: create the local storage directories for use by YARN log dir
+  file: path={{ item }} state=directory owner=yarn group=yarn mode=0755
+  with_items: "{{yarn_nodemanager_log_dirs}}"
   tags:
   - cdh5-slave
 

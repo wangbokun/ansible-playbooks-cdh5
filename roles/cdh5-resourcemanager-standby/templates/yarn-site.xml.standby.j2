@@ -6,9 +6,10 @@
  <!-- the most important properties -->
  <property><name>yarn.nodemanager.aux-services</name><value>mapreduce_shuffle</value></property>
 
+<property><name>yarn.nodemanager.aux-services.spark_shuffle.class</name><value>org.apache.spark.network.yarn.YarnShuffleService</value></property>
  <property><name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name><value>org.apache.hadoop.mapred.ShuffleHandler</value></property>
 
- <property><name>yarn.resourcemanager.scheduler.class</name><value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value></property>
+<property><name>yarn.resourcemanager.scheduler.class</name><value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value></property>
 
  <property><name>yarn.application.classpath</name><value>$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*</value></property>
 
@@ -44,7 +45,7 @@
  <property><name>yarn.log-aggregation-enable</name><value>true</value></property>
  <property><name>yarn.label.enabled</name><value>true</value></property>
 
-<!-- enable resource  manager HA -->
+!-- enable resource  manager HA -->
  <property><name>yarn.resourcemanager.connect.retry-interval.ms</name><value>2000</value></property>
  <property><name>yarn.resourcemanager.ha.enabled</name><value>true</value></property>
  <property><name>yarn.resourcemanager.ha.automatic-failover.enabled</name><value>true</value></property>
@@ -53,7 +54,7 @@
 
  <property><name>yarn.resourcemanager.cluster-id</name><value>my-cluster</value></property>
  <property><name>yarn.resourcemanager.ha.rm-ids</name><value>{{ groups['cdh5-resourcemanager'] | join  () }},{{ groups['cdh5-resourcemanager-standby'] | join() }}</value></property>
- <property><name>yarn.resourcemanager.ha.id</name><value>{{ groups['cdh5-resourcemanager'] | join  () }}</value></property>
+ <property><name>yarn.resourcemanager.ha.id</name><value>{{ groups['cdh5-resourcemanager-standby' ] | join  () }}</value></property>
 
  <property><name>yarn.resourcemanager.store.class</name><value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value></property>
  <!--
@@ -65,7 +66,7 @@
 <property><name>yarn.log.server.url</name><value>http://{{ groups['cdh5-resourcemanager'] | join() }}:19888/jobhistory/logs/</value></property>
 
  <property><name>yarn.resourcemanager.hostname.{{ groups['cdh5-resourcemanager'] | join() }}</name><value>{{ groups['cdh5-resourcemanager'] | join() }}</value></property>
- <property><name>yarn.resourcemanager.hostname.{{ groups['cdh5-resourcemanager-standby'] | join() }}</name><value>{{ groups['cdh5-resourcemanager-standby'] | join() }}</value></property>
+ <property><name>yarn.resourcemanager.hostname.{{ groups['cdh5-resourcemanager'] | join() }}</name><value>{{ groups['cdh5-resourcemanager-standby'] | join() }}</value></property>
 
  <property><name>yarn.resourcemanager.zk-address</name><value>{{ groups['cdh5-zookeeperserver'] | join(':2181' + ',') }}:2181</value></property>
 

@@ -5,12 +5,14 @@
   - pig
   tags:
   - cdh5-pig
+  - cdh5-luancher
 
 - name:  install datafu pkg
   yum: name=pig-udf-datafu state=present
   tags:
   - cdh5-pig
-
+  - cdh5-luancher
+ 
 - name: copy pig configuration files
   template: src={{ item }}.j2 dest=/etc/pig/conf/{{ item }} owner=root group=root mode=0644
   with_items:
@@ -21,3 +23,4 @@
   tags:
   - cdh5-pig
   - cdh5-pig-conf
+  - cdh5-luancher

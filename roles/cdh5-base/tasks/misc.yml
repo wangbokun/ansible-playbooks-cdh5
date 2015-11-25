@@ -12,6 +12,5 @@
 
 - name: disable SELinux in command line
   shell: setenforce 0
-  when: selinux_conf|changed
   tags:
   - disable_selinux

@@ -12,6 +12,7 @@
   - hue.ini
   tags:
   - cdh5-hue
+  - cdh5-rsync-conf
 
 - name: start hue
   service: name=hue state=started

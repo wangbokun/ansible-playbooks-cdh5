@@ -2,50 +2,55 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 <configuration>
-<property>
-  <name>hive.metastore.uris</name>
-  <value>thrift://{{ groups['cdh5-namenode-backup']| join('') }}:9083</value>
-</property>
-<property>
-  <name>hive.metastore.local</name>
-  <value>false</value>
-</property>
+
 <property>
   <name>javax.jdo.option.ConnectionURL</name>
-  <value>jdbc:mysql://{{ mysql_hosts }}/metastore</value>
+  <value>jdbc:mysql://busdevcdhtest.c2lyaqdpfktq.us-west-1.rds.amazonaws.com/metastore</value>
 </property>
+
 <property>
   <name>javax.jdo.option.ConnectionDriverName</name>
   <value>com.mysql.jdbc.Driver</value>
 </property>
+
 <property>
   <name>javax.jdo.option.ConnectionUserName</name>
   <value>hive</value>
 </property>
+
 <property>
   <name>javax.jdo.option.ConnectionPassword</name>
-  <value>{{ hive_mysql_passwd }}</value>
+  <value>hive</value>
 </property>
 
 <property>
   <name>datanucleus.autoCreateSchema</name>
-  <value>false</value>
+  <value>true</value>
 </property>
+
 <property>
   <name>datanucleus.fixedDatastore</name>
   <value>true</value>
 </property>
+
 <property>
   <name>datanucleus.autoStartMechanism</name> 
   <value>SchemaTable</value>
 </property> 
+
+<property>
+  <name>hive.metastore.uris</name>
+  <value>thrift://10.3.4.160.cmcm.com:9083</value>
+</property>
+
 <property>
   <name>hive.support.concurrency</name>
   <value>true</value>
 </property>
+
 <property>
   <name>hive.zookeeper.quorum</name>
-  <value>{{ groups['cdh5-zookeeperserver'] | join(',') }}</value>
+  <value>10.3.5.10,10.3.5.11,10.3.5.12</value>
 </property>
 
 <property>
@@ -53,9 +58,18 @@
     <value>file:///usr/lib/hive/lib/zookeeper.jar</value>
 </property>
 
+<property>
+  <name>hive.metastore.schema.verification</name><value>true</value>
+</property>
 
 <property>
-  <name>hive.metastore.schema.verification</name><value>false</value>
+    <name>hive.cluster.delegation.token.store.zookeeper.connectString</name>
+    <value>10.3.5.1:2181</value>
+</property>
+
+<property>  
+    <name>hive.insert.into.multilevel.dirs</name>  
+    <value>true</value>  
 </property>
 
 </configuration>

@@ -10,14 +10,13 @@
 
 - name: create the data directory for the namenode metadata
   file: path={{ item }} state=directory owner=hdfs group=hdfs mode=0700
-  with_items: 
-  - "{{ dfs_namenode_name_dir }}"
+  with_items: "{{ dfs_namenode_name_dir }}"
   tags:
   - cdh5-namenode
   - cdh5-namenode-backup
 
 - name: create the dfs hosts exclude file
-  file: path={{ dfs_hosts_exclude }} state=touch owner=hdfs group=hdfs mode=0644
+  file: path={{ dfs_hosts_exclude }} state=directory owner=hdfs group=hdfs mode=0644
   tags:
   - cdh5-namenode
   - cdh5-namenode-backup
@@ -38,13 +37,13 @@
   - cdh5-namenode
   - cdh5-namenode-backup
 
-#- name: initialize the zkfc for namenode
-#  shell: creates={{ item }} sudo -u hdfs hdfs zkfc -formatZK && touch {{ item }}
-#  with_items:
-#  - /var/hadoop/.status/zkfc.formatted
-#  tags:
-#  - cdh5-namenode
-#  - cdh5-namenode-backup
+- name: initialize the zkfc for namenode
+  shell: creates={{ item }} sudo -u hdfs hdfs zkfc -formatZK && touch {{ item }}
+  with_items:
+  - /var/hadoop/.status/zkfc.formatted
+  tags:
+  - cdh5-namenode
+  - cdh5-namenode-backup
 
 - name: start zkfc for namenodes
   service: name=hadoop-hdfs-zkfc state=started

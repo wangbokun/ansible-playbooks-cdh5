@@ -575,7 +575,7 @@
 
     [[[default]]]
       # Enter the filesystem uri
-      fs_defaultfs=hdfs://{{ groups['cdh5-namenode-primary']| join('.' ~ tl_domain ) }}.{{ tl_domain }}:8020
+      fs_defaultfs=hdfs://{{ groups['cdh5-namenode-primary'] | join('') }}:8020
 
       # NameNode logical name.
       ## logical_name=
@@ -583,7 +583,7 @@
       # Use WebHdfs/HttpFs as the communication mechanism.
       # Domain should be the NameNode or HttpFs host.
       # Default port is 14000 for HttpFs.
-      webhdfs_url=http://{{ groups['cdh5-namenode-primary']| join('.' ~ tl_domain ) }}.{{ tl_domain }}:50070/webhdfs/v1
+      webhdfs_url=http://{{ groups['cdh5-namenode-primary']| join('') }}:50070/webhdfs/v1
 
       # Change this if your HDFS cluster is Kerberos-secured
       ## security_enabled=false
@@ -597,7 +597,7 @@
 
     [[[default]]]
       # Enter the host on which you are running the ResourceManager
-      resourcemanager_host= {{ groups['cdh5-namenode-primary']| join('.' ~ tl_domain ) }}.{{ tl_domain }}
+      resourcemanager_host= {{ groups['cdh5-namenode-primary']| join('') }}
 
       # The port where the ResourceManager IPC listens on
       resourcemanager_port=8032
@@ -612,13 +612,13 @@
       ## security_enabled=false
 
       # URL of the ResourceManager API
-      resourcemanager_api_url=http://{{ groups['cdh5-namenode-primary']| join('.' ~ tl_domain ) }}.{{ tl_domain }}:8088
+      resourcemanager_api_url=http://{{ groups['cdh5-namenode-primary']| join('')}}:8088
 
       # URL of the ProxyServer API
-      proxy_api_url=http://{{ groups['cdh5-namenode-primary']| join('.' ~ tl_domain ) }}.{{ tl_domain }}:8088
+      proxy_api_url=http://{{ groups['cdh5-namenode-primary']| join('')}}:8088
 
       # URL of the HistoryServer API
-      history_server_api_url=http://{{ groups['cdh5-namenode-primary']| join('.' ~ tl_domain ) }}.{{ tl_domain }}:19888
+      history_server_api_url=http://{{ groups['cdh5-namenode-primary']| join('')}}:19888
 
     # HA support by specifying multiple clusters
     # e.g.

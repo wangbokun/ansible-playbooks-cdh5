@@ -4,10 +4,12 @@ snn
 jn
 dn
 cdh5-luancher
+cdh5-hbase
 
 [cdh5-namenode:children]
 cdh5-namenode-primary
 cdh5-namenode-backup
+
 [cdh5-namenode-primary]
 x.x.x.x
 
@@ -15,97 +17,92 @@ x.x.x.x
 x.x.x.x
 
 [cdh5-journalnode]
-10.5.2.x
-10.5.2.x
-10.5.2.x
+x.x.x.x
 
 [cdh5-zookeeperserver]
-10.5.2.x   zoo_id=1
-10.5.2.x  zoo_id=2
-10.5.2.x  zoo_id=3
+x.x.x.x  zoo_id=1
+x.x.x.x  zoo_id=2
+x.x.x.x  zoo_id=3
 
 [cdh5-resourcemanager]
-10.5.2.x
+x.x.x.x
+
+[cdh5-resourcemanager-standby]
+x.x.x.x
+
 [cdh5-httpfs]
-10.5.2.x
+x.x.x.x
+
+
+[cdh5-hbase:children]
+cdh5-hbase-master
+cdh5-hbase-regionserver
+
+[cdh5-hbase-master]
+x.x.x.x
+x.x.x.x
+
+[cdh5-hbase-regionserver]
+x.x.x.x
+x.x.x.x
 
 [cdh5-slave]
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
+x.x.x.x
+x.x.x.x
+x.x.x.x
 
-[cdh5-hive]
-10.5.2.x
-
-[cdh5-oozie]
-10.5.2.x
-
-[cdh5-hue]
-10.5.2.x
 
 [cdh5-luancher]
-10.5.2.x
+x.x.x.x
 
-[cdh5-pig]
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
+
+[cdh5-hive:children]
+cdh5-hives
+cdh5-luancher
+
+[cdh5-hives]
+x.x.x.x
+
+[cdh5-oozie:children]
+cdh5-oozies
+cdh5-luancher
+
+[cdh5-oozies]
+x.x.x.x
+
+[cdh5-hue]
+x.x.x.x
+
+[cdh5-pig:children]
+cdh5-pigs
+cdh5-luancher
+
+[cdh5-pigs]
+x.x.x.x
+x.x.x.x
+x.x.x.x
+x.x.x.x
 
 [cdh5-spark:children]
 cdh5-spark-node
 cdh5-luancher
 
 [cdh5-spark-node]
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
+x.x.x.x
+x.x.x.x
 
 [nn1]
-10.5.2.x
+x.x.x.x
 [snn]
-10.5.2.x
-
+x.x.x.x
 
 [jn]
-10.5.2.x
-10.5.2.x
-10.5.2.x
+x.x.x.x
+x.x.x.x
+x.x.x.x
 
 [dn]
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
-10.5.2.x
+x.x.x.x
+x.x.x.x
+x.x.x.x
+x.x.x.x

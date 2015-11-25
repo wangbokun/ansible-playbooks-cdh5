@@ -49,13 +49,10 @@
   roles:
   - cdh5-resourcemanager
 
-#- hosts: cdh5-hbase-master
-#  roles:
-#  - cdh5-hbase-master
+- hosts: cdh5-resourcemanager-standby
+  roles:
+  - cdh5-resourcemanager-standby
 
-#- hosts: cdh5-hbase-regionserver
-#  roles:
-#  - cdh5-hbase-regionserver
 
 - hosts: cdh5-hive
   roles:
@@ -73,17 +70,18 @@
   roles:
   - cdh5-spark-base
 
-- hosts: cdh5-luancher
-  roles:
-  - cdh5-luancher
-
 - hosts: cdh5-hue
   roles:
   - cdh5-hue
-#- hosts: cdh5-spark-master
-#  roles:
-#  - cdh5-spark-master
- 
-#- hosts: cdh5-spark-worker
-#  roles:
-#  - cdh5-spark-worker
+
+- hosts: cdh5-hbase-master
+  roles:
+  - cdh5-hbase-master
+
+- hosts: cdh5-hbase-regionserver
+  roles:
+  - cdh5-hbase-regionserver
+
+- hosts: cdh5-all
+  roles:
+  - cdh5-nmon

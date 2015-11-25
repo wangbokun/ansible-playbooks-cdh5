@@ -8,23 +8,15 @@
   - cdh5-namenode
   - cdh5-namenode-primary
 
-
-- name: create the data directory for the namenode metadata
+- name: create the data directory for the namenode  dir
   file: path={{ item }} state=directory owner=hdfs group=hdfs mode=0700
-  with_items: 
-  - /var/hadoop/data/1/
-  - /var/hadoop/data/1/dfs/
-  - /var/hadoop/data/2/
-  - /var/hadoop/data/2/dfs/
-  - /var/hadoop/data/1/dfs/nn/
-  - /var/hadoop/data/2/dfs/nn
-  #- "{{ dfs_namenode_name_dir }}"
-  tags: 
+  with_items: "{{ dfs_namenode_name_dir }}"
+  tags:
   - cdh5-namenode
   - cdh5-namenode-primary
 
 - name: create the dfs hosts exclude file
-  file: path={{dfs_hosts_exclude}} state=touch  owner=hdfs group=hdfs mode=0644
+  file: path={{dfs_hosts_exclude}} state=directory  owner=hdfs group=hdfs mode=0644
   tags:
   - create-file
   - cdh5-namenode

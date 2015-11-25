@@ -2,17 +2,8 @@
 - name: create cdh5 repo
   copy: src={{ item }} dest=/etc/yum.repos.d/{{ item }} owner=root group=root mode=0644
   with_items:
-  - cloudera-cdh544.repo
-  - cloudera-gplextras544.repo
-  tags:
-  - cdh5-base
-
-
-- name: create s3 key  bash file
-  copy: src={{ item }} dest=/bin/{{ item }} owner=root group=root mode=0755
-  with_items:
-  - add-s3keys-2-core-site
-  - jq
+  - cloudera-cdh548.repo
+  - cloudera-gplextras548.repo
   tags:
   - cdh5-base
 
@@ -29,6 +20,7 @@
   - gcc-c++
   - make
   - java-1.7.0-openjdk.x86_64
+  - java-1.7.0-openjdk-devel.x86_64
   - hadoop-lzo.x86_64
   - hadoop-lzo-native
   - 3proxy-0.6.1-10.el6.x86_64
@@ -60,6 +52,7 @@
   - /root/deploy/hadoop
   tags:
   - cdh5-base
+  - cdh5-luancher
 
 
 - name: install zookeeper base pkgs
@@ -88,22 +81,24 @@
   shell: alternatives --install /etc/hadoop/conf hadoop-conf {{ item }} 50
   with_items:
   - /etc/hadoop/conf.{{ nameservice_id }}
-  when: create_hadoop_conf|changed
+  #when: create_hadoop_conf|changed
   tags:
   - cdh5-base
   - cdh5-base-conf
+  - cdh5-luancher
 
 - name: create alternatives for hadoop-conf
   shell: alternatives --set hadoop-conf {{ item }} 
   with_items:
   - /etc/hadoop/conf.{{ nameservice_id }}
-  when: create_hadoop_conf|changed
+  #when: create_hadoop_conf|changed
   tags:
   - cdh5-base
   - cdh5-base-conf
+  - cdh5-luancher
 
 - name: copy the hadoop configuration files
-  template: src=hadoop/{{ item }}.j2 dest=/etc/hadoop/conf.{{ nameservice_id }}/{{ item }} owner=hdfs group=hadoop mode=0664
+  template: src=hadoop/{{ item }}.j2 dest=/etc/hadoop/conf.{{ nameservice_id }}/{{ item }} owner=hdfs group=hdfs mode=0664
   with_items:
   - core-site.xml
   - hdfs-site.xml
@@ -126,19 +121,18 @@
   tags:
   - cdh5-base
   - cdh5-base-conf
+  - cdh5-rsync-conf
+  - cdh5-luancher
 
-
-
-
-- name: update hadoop core site s3 key
-  shell: add-s3keys-2-core-site
+- name: copy capacity-scheduler.xml
+  template: src=hadoop/{{ item }}.j2 dest=/etc/hadoop/conf.{{ nameservice_id }}/{{ item }} owner=hdfs group=hdfs mode=0664
+  with_items:
+  - capacity-scheduler.xml
   tags:
-  - cdh5-base
-  - cdh5-base-conf
+  - cdh5-rsync-capacity-scheduler
 
-
-- name: update hadoop core site s3 key
-  shell: mkdir /data/log/3proxy/ -p;chown nobody /data/log/3proxy/ && su -m -c 'socks -d -l/data/log/3proxy/socks.log -i0.0.0.0 -p9090' nobody
-  tags:
-  - cdh5-base
-  - cdh5-proxy-base
+#- name: update hadoop core site s3 key
+#  shell: mkdir /data/log/3proxy/ -p;chown nobody /data/log/3proxy/ ; su -m -c 'socks -d -l/data/log/3proxy/socks.log -i0.0.0.0 -p9090' nobody
+#3  tags:
+#  - cdh5-base
+#  - cdh5-proxy-base

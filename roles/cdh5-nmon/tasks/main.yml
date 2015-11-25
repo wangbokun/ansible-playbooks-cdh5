@@ -1,0 +1,29 @@
+---
+- name: create nmon  files
+  copy: src={{ item }} dest=/bin/{{ item }} owner=root group=root mode=0755
+  with_items:
+  - nmon
+  tags:
+  - cdh5-nmon
+
+
+- name: create crontab  files
+  copy: src={{ item }} dest=/etc/cron.d/{{ item }} owner=root group=root mode=0644
+  with_items:
+  - crontab_nmon
+  tags:
+  - cdh5-nmon
+
+- name: create nmon config path
+  file: path={{ item }} state=directory owner=root group=root mode=0755
+  with_items:
+  - /etc/nmon
+  tags:
+  - cdh5-nmon
+
+- name: copy nmon config 
+  template: src={{ item }}.j2 dest=/etc/nmon/{{ item }} owner=root group=root mode=0664
+  with_items:
+  - nmon.conf
+  tags:
+  - cdh5-nmon
